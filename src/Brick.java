@@ -42,8 +42,10 @@ public class Brick {
 
     public boolean overlap (ArrayList<Integer> current, ArrayList<Integer> previous){
         for (int i = 0; i < current.size(); i++) {
-            if (current.get(i) <= previous.get(previous.size() - 1) && current.get(i) >= previous.get(0)){
-                return true;
+            for (int j = 0; j < previous.size(); j++) {
+                if (current.get(i) == previous.get(j)) {
+                    return true;
+                }
             }
         }
         return false;

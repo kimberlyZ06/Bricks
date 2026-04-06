@@ -30,49 +30,53 @@ public class Main {
     }
 
     private static int partTwo(ArrayList<Brick> bricks) {
-//        ArrayList<Integer> positions = new ArrayList<Integer>();
+        ArrayList<Integer> positions = new ArrayList<Integer>();
+        //find max length;
+        int maxLength = 0;
+        ArrayList<Integer> len = new ArrayList<>();
+        for (int i = 0; i < bricks.size(); i++) {
+            for (int j = bricks.get(i).getStart(); j < bricks.get(i).getEnd(); j++) {
+                len.add(j);
+            }
+        }
+        for (int i = 0; i < len.size() - 1; i++) {
+            if (maxLength < len.get(i)){
+                maxLength = len.get(i);
+            }
+        }
         // first brick
         ArrayList<Integer> previous = new ArrayList<>();
         for (int i = bricks.get(0).getStart(); i <= bricks.get(0).getEnd(); i++) {
             previous.add(i);
         }
         int height = 0;
-        for (int i = 0; i < bricks.size(); i++) {
+        for (int i = 1; i < bricks.size(); i++) {
             ArrayList<Integer> currentbrick = new ArrayList<>();
             for (int j = bricks.get(i).getStart(); j <= bricks.get(i).getEnd(); j++) {
                 // check for overlap
                 currentbrick.add(j);
-
-//                positions.add(j);
-//                System.out.println(positions);
             }
+            System.out.println("Previous: " + previous);
             Brick current = bricks.get(i);
-            System.out.println(current);
+            System.out.println("Current: " + current);
             if(current.overlap(currentbrick,previous)){
-                height++;
+                System.out.println(current.overlap(currentbrick,previous));
+                for (int j = 0; j < maxLength; j++) {
+                    positions.add(j);
+                }
+
                 previous = currentbrick;
             }
-        }
 
-//        int highest = 0;
-//        for (int i = 0; i < positions.size() - 1; i++) {
-//            if (highest < positions.get(i)){
-//                highest = positions.get(i);
-//            }
-//        }
-//
-//        for (int index = 0; index <= highest; index++) {
-//            int counter = 0;
-//            for (int i = 0; i < positions.size(); i++) {
-//                if (positions.get(i) == index){
-//                    counter++;
-//                }
-//            }
-//            System.out.println("counter for " + index + ": " + counter);
-//            if (counter > height){
-//                height = counter;
-//            }
-//        }
+            for (int j = 0; j < currentbrick.size(); j++) {
+                previous.add(currentbrick.get(j));
+            }
+        }
+        for (int i = 0; i < positions.size(); i++) {
+            if(positions.get(i) == 1){
+                height++;
+        }
+        }
         return height;
     }
 
