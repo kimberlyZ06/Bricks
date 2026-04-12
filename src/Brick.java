@@ -4,6 +4,16 @@ public class Brick {
     private int start;
     private int end;
 
+    public int getLayer() {
+        return layer;
+    }
+
+    public void setLayer(int layer) {
+        this.layer = layer;
+    }
+
+    private int layer;
+
     public int getLength() {
         return length;
     }
@@ -18,6 +28,7 @@ public class Brick {
         this.start = start;
         this.end = end;
         length = end - start;
+        layer = 1;
     }
 
     public int getStart() {
@@ -40,10 +51,10 @@ public class Brick {
         return "Start: " + start + " --- End: " + end;
     }
 
-    public boolean overlap (ArrayList<Integer> current, ArrayList<Integer> previous){
-        for (int i = 0; i < current.size(); i++) {
-            for (int j = 0; j < previous.size(); j++) {
-                if (current.get(i) == previous.get(j)) {
+    public boolean overlap (Brick current, Brick previous){
+        for (int i = current.getStart(); i <= current.getEnd(); i++) {
+            for (int j = previous.getStart(); j <= previous.getEnd(); j++) {
+                if (i == j) {
                     return true;
                 }
             }
