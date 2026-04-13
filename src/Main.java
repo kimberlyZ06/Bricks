@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -32,29 +31,31 @@ public class Main {
     }
 
     private static int partTwo(ArrayList<Brick> bricks) {
-        ArrayList<Brick> checked = new ArrayList<>();
-        checked.add(bricks.get(0));
-        for (int i = 1; i < bricks.size(); i++) {
-            Brick current = bricks.get(i);
-//            System.out.println("Current brick: " + current);
-            for (int j = 0; j < checked.size(); j++) {
-//                System.out.println("Current Check: " + checked.get(j));
-                if(current.overlap(current,checked.get(j))){
-                    bricks.get(i).setLayer(checked.get(j).getLayer() + 1);
-//                    System.out.println("Current brick layer: " + bricks.get(i).getLayer());
-                }
+        int max = 0;
+        for (int i = 0; i < bricks.size(); i++) {
+            if (bricks.get(i).getEnd() > max){
+                max = bricks.get(i).getEnd();
             }
-            checked.add(bricks.get(i));
-//            System.out.println(checked);
         }
 
-        int height = 0;
-        for (int i = 0; i < checked.size(); i++) {
-            int currentHeight = checked.get(i).getLayer();
-            if (currentHeight > height){
-                height = currentHeight;
+        ArrayList<Integer> counter = new ArrayList<>();
+        for (int i = 0; i < max; i++) {
+            counter.add(0);
+        }
+
+        int height = 1;
+        for (int i = 0; i < bricks.size() - 1; i++) {
+            for (int j = bricks.get(i).getStart(); j <= bricks.get(i).getEnd(); j++) {
+                counter.set(j - 1, height);
+            }
+            Brick next = bricks.get(i + 1);
+            if (next.overlap(next, bricks.get(i))) {
+                height++;
+            } else {
+
             }
         }
+        System.out.println(counter);
         return height;
     }
 
@@ -69,38 +70,52 @@ public class Main {
         int maxY = bricks.size();
         int[][] array = new int[maxY][maxX];
 
-        int layer = 0;
         for (int i = 0; i < bricks.size(); i++) {
-            bricks.get(i).setLayer(layer);
-            for (int j = bricks.get(i).getStart(); j <= bricks.get(i).getEnd(); j++) {
-                array[bricks.get(i).getLayer()][j - 1] = 1;
+            ArrayList<Integer> counter = new ArrayList<>();
+            for (int col = bricks.get(i).getStart(); col <= bricks.get(i).getEnd(); col++) {
+                int count = 0;
+                for (int row = 0; row < maxY; row++) {
+                    if (array[row][col - 1] == 1){
+                        count = row;
+                    }
+                }
+                counter.add(count);
+//                System.out.println("counter: " + counter);
             }
-            Brick current = bricks.get(i);
-            if(i != 0) {
-                System.out.println("Current brick: " + current);
-                System.out.println("Previous brick: " + bricks.get(i - 1));
-            }
-            if(i > 0) {
-                if (current.overlap(current, bricks.get(i - 1))) {
-                    System.out.println(current + " overlaps w/ " + bricks.get(i-1));
-                    layer++;
+            int nextLayer = 0;
+            for (int j = 0; j < counter.size(); j++) {
+                if (counter.get(j) > nextLayer){
+                    nextLayer = counter.get(j);
                 }
             }
-        }
-        System.out.println(Arrays.deepToString(array));
+//            System.out.println("Next layer: " + nextLayer);
 
-        int height = array.length;
-        for (int i = array.length - 1; i >= 0 ; i--) {
-            boolean empty = true;
-            if (array[i].toString().contains("1")){
-                empty = false;
+            for (int col = bricks.get(i).getStart(); col <= bricks.get(i).getEnd(); col++) {
+                for (int row = nextLayer + 1; row > 0; row--)
+                array[row][col - 1] = 1;
             }
+//            System.out.println("Array: " + Arrays.deepToString(array));
+        }
 
-            if (empty){
-                height--;
+
+        ArrayList<Integer> heights =new ArrayList<>();
+        for (int col = 0; col < maxX; col++) {
+            int height = 0;
+            for (int row = 0; row < maxY; row++) {
+                if(array[row][col] == 1){
+                    height++;
+                }
+            }
+            heights.add(height);
+        }
+
+        int maxHeight = 0;
+        for (int i = 0; i < heights.size(); i++) {
+            if (heights.get(i) > maxHeight){
+                maxHeight = heights.get(i);
             }
         }
-        return height;
+        return maxHeight;
     }
 
     public static ArrayList<String> getFileData(String fileName) {
