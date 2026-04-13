@@ -31,31 +31,24 @@ public class Main {
     }
 
     private static int partTwo(ArrayList<Brick> bricks) {
-        int max = 0;
-        for (int i = 0; i < bricks.size(); i++) {
-            if (bricks.get(i).getEnd() > max){
-                max = bricks.get(i).getEnd();
+        ArrayList<Brick> checked = new ArrayList<>();
+        checked.add(bricks.get(0));
+        for (int i = 1; i < bricks.size(); i++) {
+            Brick current = bricks.get(i);
+            for (int j = 0; j < checked.size(); j++) {
+                if (current.overlap(current, checked.get(j))){
+                    bricks.get(i).setLayer(checked.get(j).getLayer() + 1);
+                }
             }
+            checked.add(bricks.get(i));
         }
 
-        ArrayList<Integer> counter = new ArrayList<>();
-        for (int i = 0; i < max; i++) {
-            counter.add(0);
-        }
-
-        int height = 1;
-        for (int i = 0; i < bricks.size() - 1; i++) {
-            for (int j = bricks.get(i).getStart(); j <= bricks.get(i).getEnd(); j++) {
-                counter.set(j - 1, height);
-            }
-            Brick next = bricks.get(i + 1);
-            if (next.overlap(next, bricks.get(i))) {
-                height++;
-            } else {
-
+        int height = 0;
+        for (int i = 0; i < checked.size(); i++) {
+            if (checked.get(i).getLayer() > height){
+                height = checked.get(i).getLayer();
             }
         }
-        System.out.println(counter);
         return height;
     }
 
